@@ -1,0 +1,30 @@
+<%# view for pull_requests.erb %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AM1 spike</title>
+</head>
+<body>
+  <h1>GitHub PRs spike</h1>
+  <ul>
+    <% @pull_requests.each do |pull_request| %>
+      <li>
+        <a href="<%= pull_request.html_url %>">
+          <%= "PR title: #{pull_request.title}" %>
+        </a>
+        <br>
+        <%= "author: #{pull_request.user.login}" %>
+        <br>
+        <%= "state: #{pull_request.state}" %>
+        <br>
+         <%# <%= "status: #{pull_request.open_issues_count}" %>
+        <br>
+         <%# <%= "status: #{pull_request.links.review_comments}" %>
+        <br>
+        <%= "Created the: #{pull_request.created_at}" %>
+        <br>
+      </li>
+    <% end %>
+  </ul>
+</body>
+</html>

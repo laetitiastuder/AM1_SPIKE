@@ -1,0 +1,26 @@
+<%# view for user.erb %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AM1 spike</title>
+</head>
+<body>
+  <h1>GitHub PRs spike 2</h1>
+  <ul>
+    <%= @user.login %>
+    <% @repos.each do |repo| %>
+      <li>
+        <a href="<%= repo.html_url %>">
+          <%= repo.name %><br>
+        </a>
+        <%= repo.status %><br>
+        <%= "open issue: #{repo.open_issues_count}" %>
+        <%= "reviewers: #{repo.requested_reviewers}" %>
+
+      </li>
+    <% end %>
+     <%# <%= @pr %>
+  </ul>
+</body>
+</html>
+

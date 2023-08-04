@@ -1,0 +1,27 @@
+<%# view for user.erb %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AM1 spike</title>
+</head>
+<body>
+  <h1>Repos and prs</h1>
+    <% @repos_with_prs.each do |repo_full_name, pull_requests| %>
+      <% repo_name_parts = repo_full_name.split("/") %>
+      <% repo_owner = repo_name_parts.first%>
+      <h4><%= repo_name = repo_name_parts.last%></h4>
+
+      <ul>
+        <% pull_requests.each do |pr| %>
+          <li>
+            <a href="<%= pr.html_url %>">
+              <%= "PR #{pr.state}: #{pr.title}" %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+
+    <% end %>
+</body>
+</html>
+
