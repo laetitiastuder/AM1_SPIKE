@@ -1,9 +1,9 @@
 # This file contains the main code for the app
 require 'sinatra'
 require 'octokit'
+require 'dotenv/load' # load environment variable from .env
 
 # GitHub credentials
-GITHUB_ACCESS_TOKEN = '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'
 GITHUB_USERNAME = 'laetitiastuder'
 # REPO_OWNER = 'laetitiastuder'
 # REPO_NAME = 'RailsBlog'
@@ -14,7 +14,7 @@ REPOS = {
 
 # Set up Octokit client with my access token
 Octokit.configure do |c|
-  c.access_token = GITHUB_ACCESS_TOKEN
+  c.access_token = ENV['GITHUB_TOKEN']
 end
 
 # Route to display PRs
@@ -29,7 +29,7 @@ get '/pull_requests' do
   erb :pull_requests
 end
 
-client = Octokit::Client.new(:access_token => GITHUB_ACCESS_TOKEN)
+client = Octokit::Client.new(:access_token => ENV['GITHUB_TOKEN'])
 
 # get '/user' do
 #   @user = client.user

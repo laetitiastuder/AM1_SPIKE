@@ -15,8 +15,14 @@
         <% pull_requests.each do |pr| %>
           <li>
             <a href="<%= pr.html_url %>">
-              <%= "PR #{pr.state}: #{pr.title}" %>
+              <%= pr.title %>
             </a>
+            <br>
+            <%= "author: #{pr.user.login}" %>
+            <br>
+            <%= "state: #{pr.state}" %>
+            <br>
+
           </li>
         <% end %>
       </ul>
