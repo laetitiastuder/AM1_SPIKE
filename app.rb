@@ -5,13 +5,10 @@ require 'dotenv/load' # load environment variable from .env
 
 # GitHub credentials
 GITHUB_USERNAME = 'laetitiastuder'
-# REPO_OWNER = 'laetitiastuder'
-# REPO_NAME = 'RailsBlog'
 REPOS = {
-  repo: 'RailsBlog',
-  user: 'laetitiastuder'
+  'RailsBlog' => 'laetitiastuder',
+  'QuoteGenerator' => 'laetitiastuder'
 }
-
 # Set up Octokit client with my access token
 Octokit.configure do |c|
   c.access_token = ENV['GITHUB_TOKEN']
@@ -22,10 +19,31 @@ get '/' do
   'Hello, Sinatra!'
 end
 
+helpers do
+  def display_avatar(username)
+    user_info = Octokit.user(username)
+    if user_info.avatar_url
+      '<img src="' + user_info.avatar_url + '" alt="Avatar" width="50px" height="50px" border-radius="50%" object-fit="cover">'
+    else
+      'No avatar available'
+    end
+  end
+
+  def format_datetime(datetime)
+    datetime.strftime('%d/%m/%Y %H:%M')
+  end
+end
+
 get '/pull_requests' do
+  @all_pull_requests = []
+
+  REPOS.each do |repo_name, repo_user|
+    pull_requests = Octokit.pull_requests("#{repo_user}/#{repo_name}", state: 'all')
+    @all_pull_requests.concat(pull_requests)
+  end
   # @pull_requests = Octokit.pull_requests("#{REPO_OWNER}/#{REPO_NAME}")
-  @pull_requests = Octokit.pull_requests(REPOS)
-  print @pull_requests
+  # @pull_requests = Octokit.pull_requests(REPOS)
+  # print @pull_requests
   erb :pull_requests
 end
 
@@ -58,3 +76,4 @@ get '/repo' do
   print @repos_with_prs
   erb :repo
 end
+

@@ -7,22 +7,53 @@
 <body>
   <h1>GitHub PRs spike</h1>
   <ul>
-    <% @pull_requests.each do |pull_request| %>
+    <% @all_pull_requests.each do |pull_request| %>
+      <br>
       <li>
         <a href="<%= pull_request.html_url %>">
           <%= "PR title: #{pull_request.title}" %>
         </a>
         <br>
+        <%= "Repository: #{pull_request.base.repo.name}" %>
+        <br>
         <%= "author: #{pull_request.user.login}" %>
+        <%= display_avatar(pull_request.user.login) %>
         <br>
-        <%= "state: #{pull_request.state}" %>
+        <%= "Created the: #{format_datetime(pull_request.created_at)}" %>
         <br>
-         <%# <%= "status: #{pull_request.open_issues_count}" %>
+        <%= "State: #{pull_request.state}" %>
         <br>
-         <%# <%= "status: #{pull_request.links.review_comments}" %>
+        <% if pull_request.merged_at %>
+          <%= " Merged at: #{format_datetime(pull_request.merged_at)}" %>
+        <% else %>
+          <strong>Not Merged </strong>
+        <% end %>
         <br>
-        <%= "Created the: #{pull_request.created_at}" %>
+        <%# add comments info %>
+        <% comments = Octokit.issue_comments("#{pull_request.base.repo.owner.login}/#{pull_request.base.repo.name}", pull_request.number) %>
+        <%# <%= p comments %>
+        <% if comments.any? %>
+            <% comments.each do |comment| %>
+                <%= "Comment from: #{comment.user.login}" %>
+                <%= display_avatar(comment.user.login) %>
+               <br>
+                <%= "#{comment.body}" %>
+            <% end %>
+        <% else %>
+          <em> No comments on this PR </em>
+        <% end %>
         <br>
+        <%# add requests review info %>
+        <% review_request = Octokit.pull_request_review_requests("#{pull_request.base.repo.owner.login}/#{pull_request.base.repo.name}", pull_request.number) %>
+        <%# <%= p comments %>
+        <% if review_request.any? %>
+            <% review_request.users.each do |user| %>
+                <%= "Review requested by: #{user.login}" %>
+                <%= display_avatar(user.login) %>
+            <% end %>
+        <% else %>
+          <em> No review request on this PR </em>
+        <% end %>
       </li>
     <% end %>
   </ul>
