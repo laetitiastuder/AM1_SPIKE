@@ -4,8 +4,85 @@
 <head>
   <title>AM1 spike</title>
 </head>
+<style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    img {
+      border-radius: 100%;
+      width: 25px;
+      height: 25px
+    }
+  </style>
 <body>
   <h1>GitHub PRs spike</h1>
+  <%# Add table %>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Repository</th>
+      <th>Author</th>
+      <th>Created at</th>
+      <th>State</th>
+      <th>Merged</th>
+      <th>Request Review</th>
+      <th>Comment</th>
+    </tr>
+    <% @all_pull_requests.each do |pull_request| %>
+      <tr>
+        <td><a href="<%= pull_request.html_url %>">
+          <%= "PR title: #{pull_request.title}" %></a>
+        </td>
+        <td><%= pull_request.base.repo.name %></td>
+        <td><%="#{display_avatar(pull_request.user.login)} #{pull_request.user.login}"%></td>
+        <td><%= format_datetime(pull_request.created_at)%></td>
+        <td><%=pull_request.state%></td>
+        <td>
+          <% if pull_request.merged_at %>
+            <%= format_datetime(pull_request.merged_at) %>
+          <% else %>
+            Not yet
+           <% end %>
+        </td>
+        <td>
+          <% review_request = Octokit.pull_request_review_requests("#{pull_request.base.repo.owner.login}/#{pull_request.base.repo.name}", pull_request.number) %>
+          <% if review_request.any? %>
+            <% review_request.users.each do |user| %>
+                <%= "#{display_avatar(user.login)} #{user.login}" %>
+            <% end %>
+        <% end %>
+        </td>
+        <td>
+          <% comments = Octokit.issue_comments("#{pull_request.base.repo.owner.login}/#{pull_request.base.repo.name}", pull_request.number) %>
+          <% if comments.any? %>
+            <% comments.each do |comment| %>
+                <%= "#{display_avatar(comment.user.login)} #{comment.user.login}: " %>
+                <a href="<%= comment.html_url %>" target="_blank">link</a><br>
+            <% end %>
+          <% end %>
+        </td>
+    </tr>
+    <% end %>
+  </table>
+
+
+
+
+
+
   <ul>
     <% @all_pull_requests.each do |pull_request| %>
       <br>
